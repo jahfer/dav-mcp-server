@@ -80,7 +80,7 @@ if (DAV_PROVIDER === "fastmail") {
 }
 
 server.tool(
-  "get_my_calendars",
+  `get_my_${DAV_PROVIDER}_calendars`,
   {},
   async () => {
     if (!davClient) return { content: [{ type: "text", text: "CalDAV client not initialized for this provider."}], isError: true };
@@ -94,7 +94,7 @@ server.tool(
         }]
       };
     } catch (error) {
-      console.error("Error in get_my_calendars:", error);
+      console.error(`Error in get_my_${DAV_PROVIDER}_calendars:`, error);
       return {
         content: [{
           type: "text",
@@ -107,7 +107,7 @@ server.tool(
 );
 
 server.tool(
-  "get_calendar_events",
+  `get_calendar_events_from_${DAV_PROVIDER}`,
   {
     calendarUrl: z.string().describe("The unique identifier (URL) of the calendar from which to fetch events. You can get this from 'get_my_calendars'."),
     timeRangeStart: z.string().datetime().optional().describe("ISO 8601 datetime for start of range"),
@@ -153,7 +153,7 @@ server.tool(
 );
 
 server.tool(
-  "get_my_contact_lists",
+  `get_my_${DAV_PROVIDER}_contact_lists`,
   {},
   async () => {
     if (!cardDavClient) return { content: [{ type: "text", text: "CardDAV client not initialized for this provider."}], isError: true };
@@ -167,7 +167,7 @@ server.tool(
         }]
       };
     } catch (error) {
-      console.error("Error in get_my_contact_lists:", error);
+      console.error(`Error in get_my_${DAV_PROVIDER}_contact_lists:`, error);
       return {
         content: [{
           type: "text",
@@ -180,7 +180,7 @@ server.tool(
 );
 
 server.tool(
-  "get_contacts_from_list",
+  `get_contacts_from_${DAV_PROVIDER}_list`,
   {
     addressBookUrl: z.string().describe("The unique identifier (URL) of the contact list from which to fetch contacts. You can get this from 'get_my_contact_lists'."),
   },
@@ -206,7 +206,7 @@ server.tool(
         }]
       };
     } catch (error) {
-      console.error("Error in get_contacts_from_list:", error);
+      console.error(`Error in get_contacts_from_${DAV_PROVIDER}_list:`, error);
       return {
         content: [{
           type: "text",
@@ -220,7 +220,7 @@ server.tool(
 
 if (webDavClient) {
   server.tool(
-    "list_my_files_and_folders",
+    `list_my_files_and_folders_from_${DAV_PROVIDER}`,
     {
       path: z.string().optional().describe("The specific folder path to list. For example, 'Documents/Work'. If empty, lists files and folders in the main (root) directory."),
     },
@@ -243,7 +243,7 @@ if (webDavClient) {
           }]
         };
       } catch (error) {
-        console.error("Error in list_my_files_and_folders:", error);
+        console.error(`Error in list_my_files_and_folders_from_${DAV_PROVIDER}:`, error);
         return {
           content: [{
             type: "text",
@@ -256,7 +256,7 @@ if (webDavClient) {
   );
 
   server.tool(
-    "get_file_or_folder_details",
+    `get_file_or_folder_details_from_${DAV_PROVIDER}`,
     {
       fileUrl: z.string().describe("The unique identifier (URL) of the file or folder to get details for. You can get this from 'list_my_files_and_folders'."),
     },
@@ -272,7 +272,7 @@ if (webDavClient) {
           }]
         };
       } catch (error) {
-        console.error("Error in get_file_or_folder_details:", error);
+        console.error(`Error in get_file_or_folder_details_from_${DAV_PROVIDER}:`, error);
         return {
           content: [{
             type: "text",
