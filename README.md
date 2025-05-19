@@ -1,10 +1,10 @@
-# JMAP-MCP
+# DAV MCP Server
 
-Read emails via MCP!
+Access your calendars, contacts, and files via MCP!
 
 ## Introduction
 
-JMAP-MCP is a connector designed to interact with a JMAP (JSON Mail Access Protocol) server, allowing you to read emails via the Model Context Protocol (MCP). This project specifically demonstrates integration with a Fastmail JMAP server.
+This project is a Model Context Protocol (MCP) server that allows you to interact with your CalDAV, CardDAV, and WebDAV services. It supports both Fastmail and Apple iCloud accounts, configured via environment variables.
 
 ## Setup
 
@@ -16,37 +16,56 @@ JMAP-MCP is a connector designed to interact with a JMAP (JSON Mail Access Proto
     npm install
     ```
 
-## API Token Configuration
+    If you intend to publish or use this as a global command, you might also run `npm link` after installation, or install it globally via `npm install -g .` (once `package.json` is configured for global installation if desired).
 
-You need to set your JMAP API token to authenticate with your email server (e.g., Fastmail). Obtain your API token from your server's settings.
+## Environment Variable Configuration
 
-Set the `JMAP_SESSION_URL` and `JMAP_TOKEN` environment variables when running the application.
+To connect to your DAV services, you need to set the following environment variables when running the application:
+
+- `DAV_PROVIDER`: Specifies your DAV service provider. Set to `fastmail` or `icloud` (case-insensitive).
+- `DAV_USERNAME`: Your username for the service (e.g., your Fastmail email address or Apple ID).
+- `DAV_PASSWORD`: An app-specific password for the service. It is highly recommended to use app-specific passwords for security.
 
 ## MCP Configuration
 
-To use JMAP-MCP, you need to configure it as an `mcpServer` in your MCP configuration file. Here is an example configuration:
+To use this server, you need to configure it as an `mcpServer` in your MCP configuration file. Here is an example:
 
 ```jsonc
 {
   "mcpServers": {
-    "emails": {
-      "command": "/path/to/node",
-      "args": ["/path/to/jmap-mcp/index.js"],
+    "myDavServices": {
+      // You can name this anything you like
+      "command": "npx", // Or simply "node" if it's in your PATH
+      "args": ["-y" "@jahfer/dav-mcp-server"], // Path to the main script
       "env": {
-        "JMAP_SESSION_URL": "https://api.fastmail.com/jmap/session", // for example
-        "JMAP_TOKEN": "<your-jmap-token>"
+        "DAV_PROVIDER": "icloud", // or "icloud"
+        "DAV_USERNAME": "your-username",
+        "DAV_PASSWORD": "your-app-specific-password"
       }
     }
   }
 }
 ```
 
-- `"emails"`: This is the name you assign to this server within your MCP configuration.
-- `"command"`: The path to your Node.js executable.
-- `"args"`: An array containing the path to the `index.js` file of this project.
+## Available Tools
 
-Replace `/path/to/node` and `/path/to/jmap-mcp/index.js` with the actual paths on your system.
+Once configured, this MCP server provides the following tools:
+
+### Calendar (CalDAV)
+
+- `get_my_calendars`: Lists all your available calendars.
+- `get_calendar_events`: Fetches events from a specified calendar. You can optionally provide a start and end date/time to filter events within a specific range.
+
+### Contacts (CardDAV)
+
+- `get_my_contact_lists`: Lists all your contact address books.
+- `get_contacts_from_list`: Fetches contacts from a specified address book.
+
+### Files (WebDAV - primarily for Fastmail)
+
+- `list_my_files_and_folders`: Lists files and folders within a specified path in your WebDAV storage (defaults to the root).
+- `get_file_or_folder_details`: Fetches metadata for a given file or folder URL.
 
 ## Usage
 
-Once configured in MCP, you can use commands or features within MCP that interact with the server definition to read your emails via the JMAP protocol.
+After setting up the MCP server in your configuration, you can use commands or features within your MCP client that interact with the server definition to manage your calendars, contacts, and files.
