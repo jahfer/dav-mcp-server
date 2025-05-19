@@ -2,6 +2,10 @@
 
 Access your calendars, contacts, and files via MCP!
 
+<a href="https://glama.ai/mcp/servers/@jahfer/dav-mcp-server">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@jahfer/dav-mcp-server/badge" alt="DAV Server MCP server" />
+</a>
+
 ## Introduction
 
 This project is a Model Context Protocol (MCP) server that allows you to interact with your CalDAV, CardDAV, and WebDAV services. It supports both Fastmail and Apple iCloud accounts, configured via environment variables.
