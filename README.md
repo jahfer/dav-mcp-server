@@ -38,7 +38,7 @@ To use this server, you need to configure it as an `mcpServer` in your MCP confi
       "command": "npx", // Or simply "node" if it's in your PATH
       "args": ["-y", "@jahfer/dav-mcp-server"], // Path to the main script
       "env": {
-        "DAV_PROVIDER": "icloud", // or "icloud"
+        "DAV_PROVIDER": "icloud", // or "fastmail"
         "DAV_USERNAME": "your-username",
         "DAV_PASSWORD": "your-app-specific-password"
       }
