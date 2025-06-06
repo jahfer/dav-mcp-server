@@ -81,7 +81,10 @@ if (DAV_PROVIDER === "fastmail") {
 
 server.tool(
   `get_my_${DAV_PROVIDER}_calendars`,
-  {},
+  {
+    description: `Lists all available calendars from your ${DAV_PROVIDER} account. It returns a list of calendar objects, each containing details like its URL, name, and other properties. Use this to find the \`calendarUrl\` for other calendar-related tools.`,
+    inputSchema: {}
+  },
   async () => {
     if (!davClient) return { content: [{ type: "text", text: "CalDAV client not initialized for this provider."}], isError: true };
     try {
@@ -109,9 +112,12 @@ server.tool(
 server.tool(
   `get_calendar_events_from_${DAV_PROVIDER}`,
   {
-    calendarUrl: z.string().describe("The unique identifier (URL) of the calendar from which to fetch events. You can get this from 'get_my_calendars'."),
-    timeRangeStart: z.string().datetime().optional().describe("ISO 8601 datetime for start of range"),
-    timeRangeEnd: z.string().datetime().optional().describe("ISO 8601 datetime for end of range"),
+    description: `Fetches events from a specific calendar. You must provide a \`calendarUrl\`, which you can get from the \`get_my_${DAV_PROVIDER}_calendars\` tool. You can also optionally specify a \`timeRangeStart\` and \`timeRangeEnd\` (in ISO 8601 format) to filter events within a specific time window. If no time range is given, it may fetch all events.`,
+    inputSchema: {
+      calendarUrl: z.string().describe("The unique identifier (URL) of the calendar from which to fetch events. You can get this from 'get_my_calendars'."),
+      timeRangeStart: z.string().datetime().optional().describe("ISO 8601 datetime for start of range"),
+      timeRangeEnd: z.string().datetime().optional().describe("ISO 8601 datetime for end of range"),
+    },
   },
   async ({ calendarUrl, timeRangeStart, timeRangeEnd }) => {
     if (!davClient) return { content: [{ type: "text", text: "CalDAV client not initialized for this provider."}], isError: true };
@@ -154,7 +160,10 @@ server.tool(
 
 server.tool(
   `get_my_${DAV_PROVIDER}_contact_lists`,
-  {},
+  {
+    description: `Lists all of your contact address books from your ${DAV_PROVIDER} account. It returns a list of address book objects, each with details like its URL and name. Use this to find the \`addressBookUrl\` needed for fetching contacts.`,
+    inputSchema: {}
+  },
   async () => {
     if (!cardDavClient) return { content: [{ type: "text", text: "CardDAV client not initialized for this provider."}], isError: true };
     try {
@@ -182,7 +191,10 @@ server.tool(
 server.tool(
   `get_contacts_from_${DAV_PROVIDER}_list`,
   {
-    addressBookUrl: z.string().describe("The unique identifier (URL) of the contact list from which to fetch contacts. You can get this from 'get_my_contact_lists'."),
+    description: `Fetches all contacts from a specific address book. You must provide the \`addressBookUrl\` for the contact list you want to retrieve contacts from. You can get this URL from the \`get_my_${DAV_PROVIDER}_contact_lists\` tool. The contacts are returned in vCard format.`,
+    inputSchema: {
+      addressBookUrl: z.string().describe("The unique identifier (URL) of the contact list from which to fetch contacts. You can get this from 'get_my_contact_lists'."),
+    },
   },
   async ({ addressBookUrl }) => {
     if (!cardDavClient) return { content: [{ type: "text", text: "CardDAV client not initialized for this provider."}], isError: true };
@@ -222,7 +234,10 @@ if (webDavClient) {
   server.tool(
     `list_my_files_and_folders_from_${DAV_PROVIDER}`,
     {
-      path: z.string().optional().describe("The specific folder path to list. For example, 'Documents/Work'. If empty, lists files and folders in the main (root) directory."),
+      description: `Lists files and folders from your ${DAV_PROVIDER} WebDAV storage. You can optionally provide a \`path\` to a specific folder. If no path is provided, it lists items from the root directory. This is only available for providers that support WebDAV.`,
+      inputSchema: {
+        path: z.string().optional().describe("The specific folder path to list. For example, 'Documents/Work'. If empty, lists files and folders in the main (root) directory."),
+      },
     },
     async ({ path }) => {
       try {
@@ -258,7 +273,10 @@ if (webDavClient) {
   server.tool(
     `get_file_or_folder_details_from_${DAV_PROVIDER}`,
     {
-      fileUrl: z.string().describe("The unique identifier (URL) of the file or folder to get details for. You can get this from 'list_my_files_and_folders'."),
+      description: `Retrieves detailed properties for a specific file or folder from your ${DAV_PROVIDER} WebDAV storage. You must provide the full \`fileUrl\` of the item, which you can get from \`list_my_files_and_folders_from_${DAV_PROVIDER}\`. This is only available for providers that support WebDAV.`,
+      inputSchema: {
+        fileUrl: z.string().describe("The unique identifier (URL) of the file or folder to get details for. You can get this from 'list_my_files_and_folders'."),
+      },
     },
     async ({ fileUrl }) => {
       try {
